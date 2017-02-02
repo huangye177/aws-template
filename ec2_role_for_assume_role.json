@@ -1,0 +1,21 @@
+    "AssumeRolePolicy" : {
+      "Properties" : {
+        "Description" : "Policy for assuming roles from STS",
+        "Path" : "/",
+        "PolicyDocument" :   {
+          "Version":"2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "sts:AssumeRole"
+              ],
+              "Resource": [
+                "*"
+              ]
+            }
+          ]
+        }
+      },
+      "Type" : "AWS::IAM::ManagedPolicy"
+    }

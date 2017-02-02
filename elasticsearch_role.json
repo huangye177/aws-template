@@ -1,0 +1,93 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "AMI Role for AWS managed ElasticSearch Domain.",
+  "Metadata": {
+    "Comments": [
+      "AMI Role for AWS managed ElasticSearch Domain."
+    ]
+  },
+  "Parameters": {
+    "ElasticSearchDomainRoleName": {
+      "Description": "Role name for access AWS managed ElasticSearch Domain",
+      "Type": "String",
+      "Default": "ElasticSearchDomainRoleName"
+    }
+  },
+  "Resources": {
+    "ESDomainRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "ec2.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole"
+            },
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:aws:iam::",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":root"
+                    ]
+                  ]
+                }
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Path": "/",
+        "Policies": [
+          {
+            "PolicyName": "ESRoleESAccessPolicy",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": "es:*",
+                  "Resource": "*"
+                }
+              ]
+            }
+          }
+        ],
+        "RoleName": {
+          "Fn::Join": [
+            "",
+            [
+              {
+                "Ref": "AWS::Region"
+              },
+              {
+                "Ref": "ElasticSearchDomainRoleName"
+              }
+            ]
+          ]
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "ESDomainRoleARN": {
+      "Description": "The Role ARN that provides access to AWS managed ElasticSearch Domain.",
+      "Value": {
+        "Fn::GetAtt": [
+          "ESDomainRole",
+          "Arn"
+        ]
+      }
+    }
+  }
+}
